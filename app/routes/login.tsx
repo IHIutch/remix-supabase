@@ -4,10 +4,14 @@ import { Form, Link, useLoaderData, useNavigation } from "@remix-run/react";
 import { createServerClient, parseCookieHeader, serializeCookieHeader } from "@supabase/ssr";
 
 export const loader = async ({
-    params,
+    request,
 }: LoaderFunctionArgs) => {
+
+    const { searchParams } = new URL(request.url);
+    const message = searchParams.get("message");
+
     return json({
-        message: params.message
+        message
     });
 };
 
@@ -15,7 +19,6 @@ export default function Login() {
 
     const { message } = useLoaderData<typeof loader>()
     const navigation = useNavigation()
-
 
     return (
         <div className="flex-1 flex flex-col w-full px-8 sm:max-w-md justify-center gap-2">
@@ -63,7 +66,7 @@ export default function Login() {
                 <SubmitButton
                     name="intent"
                     value="signin"
-                    isPending={navigation.state !== 'idle'}
+                    isPending={navigation.formData?.get("intent") === 'signin'}
                     className="bg-green-700 rounded-md px-4 py-2 text-foreground mb-2"
                     pendingText="Signing In..."
                 >
@@ -72,7 +75,7 @@ export default function Login() {
                 <SubmitButton
                     name="intent"
                     value="signup"
-                    isPending={navigation.state !== 'idle'}
+                    isPending={navigation.formData?.get("intent") === 'signup'}
                     className="border border-foreground/20 rounded-md px-4 py-2 text-foreground mb-2"
                     pendingText="Signing Up..."
                 >
