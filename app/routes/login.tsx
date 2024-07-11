@@ -143,9 +143,7 @@ export async function action({
             return redirect("/login?message=Could not authenticate user");
         }
 
-        console.log('login success')
-
-        return redirect("/protected");
+        return redirect("/protected", { headers });
     }
 
     throw () => {

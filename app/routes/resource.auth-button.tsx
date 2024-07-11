@@ -38,7 +38,7 @@ export default function AuthButton() {
     return user ? (
         <div className="flex items-center gap-4">
             Hey, {user.email}!
-            <Form method="post" action="resource/auth-button">
+            <Form method="post" action="/resource/auth-button">
                 <button type="submit" className="py-2 px-4 rounded-md no-underline bg-btn-background hover:bg-btn-background-hover">
                     Logout
                 </button>

@@ -6,6 +6,7 @@ import { createServerClient, parseCookieHeader, serializeCookieHeader } from "@s
 import DeployButton from "../components/deploy-button";
 import FetchDataSteps from "../components/tutorial/fetch-data-steps";
 import Header from "../components/header";
+import AuthButton from "./resource.auth-button";
 
 export const loader = async ({
     request,
@@ -29,8 +30,6 @@ export const loader = async ({
     const {
         data: { user },
     } = await supabase.auth.getUser();
-
-    console.log({ user })
 
     if (!user) {
         return redirect("/login");
@@ -62,6 +61,7 @@ export default function ProtectedPage() {
                 <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
                     <div className="w-full max-w-4xl flex justify-between items-center p-3 text-sm">
                         <DeployButton />
+                        <AuthButton />
                     </div>
                 </nav>
             </div>
