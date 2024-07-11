@@ -1,39 +1,9 @@
-import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import { Form, json, Link, redirect, useLoaderData } from "@remix-run/react";
-import { createServerClient, parseCookieHeader, serializeCookieHeader } from "@supabase/ssr";
+import { ActionFunctionArgs } from "@remix-run/node";
+import { Form, Link, redirect } from "@remix-run/react";
+import { User } from "@supabase/supabase-js";
+import { createClient } from "~/utils/supabase/.server/server";
 
-export const loader = async ({
-    request,
-}: LoaderFunctionArgs) => {
-    const headers = new Headers()
-
-    const supabase = createServerClient(process.env.SUPABASE_URL!, process.env.SUPABASE_ANON_KEY!, {
-        cookies: {
-            getAll() {
-                return parseCookieHeader(request.headers.get('Cookie') ?? '')
-            },
-            setAll(cookiesToSet) {
-                cookiesToSet.forEach(({ name, value, options }) =>
-                    headers.append('Set-Cookie', serializeCookieHeader(name, value, options))
-                )
-            },
-        },
-    })
-
-    const {
-        data: { user },
-    } = await supabase.auth.getUser();
-
-    return json({
-        user
-    }, {
-        headers
-    });
-};
-
-export default function AuthButton() {
-    const { user } = useLoaderData<typeof loader>()
-
+export default function AuthButton({ user }: { user?: User }) {
 
     return user ? (
         <div className="flex items-center gap-4">
@@ -59,20 +29,7 @@ export async function action({
     request,
 }: ActionFunctionArgs) {
 
-    const headers = new Headers()
-
-    const supabase = createServerClient(process.env.SUPABASE_URL!, process.env.SUPABASE_ANON_KEY!, {
-        cookies: {
-            getAll() {
-                return parseCookieHeader(request.headers.get('Cookie') ?? '')
-            },
-            setAll(cookiesToSet) {
-                cookiesToSet.forEach(({ name, value, options }) =>
-                    headers.append('Set-Cookie', serializeCookieHeader(name, value, options))
-                )
-            },
-        },
-    })
+    const { supabase } = createClient(request)
 
     await supabase.auth.signOut();
     return redirect("/login");

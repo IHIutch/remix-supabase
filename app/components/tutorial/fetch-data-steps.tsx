@@ -16,10 +16,10 @@ values
 `.trim();
 
 const server = `
-import { createClient } from '@/utils/supabase/server'
+import { createClient } from "~/utils/supabase/.server/server";
 
 export default async function Page() {
-  const supabase = createClient()
+  const { supabase } = createClient()
   const { data: notes } = await supabase.from('notes').select()
 
   return <pre>{JSON.stringify(notes, null, 2)}</pre>
@@ -29,12 +29,12 @@ export default async function Page() {
 const client = `
 'use client'
 
-import { createClient } from '@/utils/supabase/client'
+import { createClient } from "~/utils/supabase/client";
 import { useEffect, useState } from 'react'
 
 export default function Page() {
   const [notes, setNotes] = useState<any[] | null>(null)
-  const supabase = createClient()
+  const { supabase } = createClient()
 
   useEffect(() => {
     const getData = async () => {
@@ -63,7 +63,7 @@ export default function FetchDataSteps() {
                         Table Editor
                     </a>{" "}
                     for your Supabase project to create a table and insert some example
-                    data. If you're stuck for creativity, you can copy and paste the
+                    data. If you&apos;re stuck for creativity, you can copy and paste the
                     following into the{" "}
                     <a
                         href="https://supabase.com/dashboard/project/_/sql/new"
@@ -93,7 +93,7 @@ export default function FetchDataSteps() {
             </Step>
 
             <Step title="Build in a weekend and scale to millions!">
-                <p>You're ready to launch your product to the world! 🚀</p>
+                <p>You&apos;re ready to launch your product to the world! 🚀</p>
             </Step>
         </ol>
     );

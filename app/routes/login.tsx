@@ -1,7 +1,7 @@
 import { ActionFunctionArgs, json, LoaderFunctionArgs, redirect } from "@remix-run/node";
 import { SubmitButton } from "../components/submit-button";
 import { Form, Link, useLoaderData, useNavigation } from "@remix-run/react";
-import { createServerClient, parseCookieHeader, serializeCookieHeader } from "@supabase/ssr";
+import { createClient } from "~/utils/supabase/.server/server";
 
 export const loader = async ({
     request,
@@ -97,20 +97,7 @@ export async function action({
     const formData = await request.formData()
     const intent = formData.get("intent") as string;
 
-    const headers = new Headers()
-
-    const supabase = createServerClient(process.env.SUPABASE_URL!, process.env.SUPABASE_ANON_KEY!, {
-        cookies: {
-            getAll() {
-                return parseCookieHeader(request.headers.get('Cookie') ?? '')
-            },
-            setAll(cookiesToSet) {
-                cookiesToSet.forEach(({ name, value, options }) =>
-                    headers.append('Set-Cookie', serializeCookieHeader(name, value, options))
-                )
-            },
-        },
-    })
+    const { supabase, headers } = createClient(request)
 
     if (intent === 'signup') {
         const origin = request.headers.get('origin')
