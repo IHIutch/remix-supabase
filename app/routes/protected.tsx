@@ -1,29 +1,16 @@
 import { LoaderFunctionArgs, redirect } from "@remix-run/node";
-import { createServerClient, parseCookieHeader, serializeCookieHeader } from "@supabase/ssr";
 import DeployButton from "../components/deploy-button";
 import FetchDataSteps from "../components/tutorial/fetch-data-steps";
 import Header from "../components/header";
 import AuthButton from "./resource.auth-button";
 import { useLoaderData } from "@remix-run/react";
+import { createClient } from "~/utils/supabase/.server/server";
 
 export const loader = async ({
     request,
 }: LoaderFunctionArgs) => {
-    const headers = new Headers()
 
-    const supabase = createServerClient(process.env.SUPABASE_URL!, process.env.SUPABASE_ANON_KEY!, {
-        cookies: {
-            getAll() {
-                return parseCookieHeader(request.headers.get('Cookie') ?? '')
-            },
-            setAll(cookiesToSet) {
-                cookiesToSet.forEach(({ name, value, options }) =>
-                    headers.append('Set-Cookie', serializeCookieHeader(name, value, options))
-                )
-            },
-        },
-    })
-
+    const { supabase } = createClient(request)
 
     const {
         data: { user },
@@ -33,9 +20,7 @@ export const loader = async ({
         return redirect("/login");
     }
 
-    return {
-        user
-    }
+    return { user }
 };
 
 
