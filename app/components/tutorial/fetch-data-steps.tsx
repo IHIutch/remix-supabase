@@ -11,30 +11,45 @@ create table notes (
 insert into notes(title)
 values
   ('Today I created a Supabase project.'),
-  ('I added some data and queried it from Next.js.'),
+  ('I added some data and queried it from Remix.'),
   ('It was awesome!');
 `.trim();
 
 const server = `
 import { createClient } from "~/utils/supabase/.server/server";
 
-export default async function Page() {
-  const { supabase } = createClient()
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  const { supabase } = createClient(request)
   const { data: notes } = await supabase.from('notes').select()
+
+  return { notes }
+};
+
+export default async function Page() {
+  const { user } = useLoaderData<typeof loader>()
 
   return <pre>{JSON.stringify(notes, null, 2)}</pre>
 }
 `.trim();
 
 const client = `
-'use client'
-
 import { createClient } from "~/utils/supabase/client";
 import { useEffect, useState } from 'react'
 
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  return {
+    env: {
+      SUPABASE_URL: process.env.SUPABASE_URL!,
+      SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY!,
+    },
+  };
+};
+
 export default function Page() {
+  const { env } = useLoaderData<typeof loader>();
+    
   const [notes, setNotes] = useState<any[] | null>(null)
-  const { supabase } = createClient()
+  const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_ANON_KEY)
 
   useEffect(() => {
     const getData = async () => {
@@ -78,7 +93,7 @@ export default function FetchDataSteps() {
                 <Code code={create} />
             </Step>
 
-            <Step title="Query Supabase data from Next.js">
+            <Step title="Query Supabase data from Remix">
                 <p>
                     To create a Supabase client and query data from an Async Server
                     Component, create a new page.tsx file at{" "}

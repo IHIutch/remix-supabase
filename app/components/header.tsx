@@ -18,7 +18,7 @@ export default function Header() {
                     <RemixLogo />
                 </a>
             </div>
-            <h1 className="sr-only">Supabase and Next.js Starter Template</h1>
+            <h1 className="sr-only">Supabase and Remix Starter Template</h1>
             <p className="text-3xl lg:text-4xl !leading-tight mx-auto max-w-xl text-center">
                 The fastest way to build apps with{" "}
                 <a
@@ -36,7 +36,7 @@ export default function Header() {
                     className="font-bold hover:underline"
                     rel="noreferrer"
                 >
-                    Next.js
+                    Remix
                 </a>
             </p>
             <div className="w-full p-[1px] bg-gradient-to-r from-transparent via-foreground/10 to-transparent my-8" />
